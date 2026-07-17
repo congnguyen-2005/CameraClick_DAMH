@@ -1,0 +1,122 @@
+.cart-page {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 32px 16px 60px;
+}
+.cart-page h2 {
+  color: #181818;
+  margin-bottom: 20px;
+}
+.empty-cart {
+  color: #777;
+  margin-bottom: 16px;
+}
+.btn-primary-inline {
+  display: inline-block;
+  background: #ff6b35;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+}
+.cart-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.cart-item {
+  display: grid;
+  grid-template-columns: 70px 1fr 100px 110px 30px;
+  align-items: center;
+  gap: 14px;
+  background: #fff;
+  padding: 14px;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.cart-item-image img, .cart-item-image .placeholder {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+  background: #f2f4f8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cart-item-info h4 {
+  margin: 0 0 4px;
+  font-size: 0.95rem;
+}
+.cart-item-variant {
+  margin: 0 0 4px;
+  font-size: 0.8rem;
+  color: #888;
+}
+.cart-item-info p {
+  margin: 0;
+  color: #ff6b35;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.cart-item-qty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+.cart-item-qty button {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: #fff;
+  cursor: pointer;
+}
+.cart-item-total {
+  font-weight: 700;
+  color: #181818;
+  text-align: right;
+}
+.cart-item-remove {
+  background: none;
+  border: none;
+  color: #999;
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+.cart-item-remove:hover {
+  color: #e94f4f;
+}
+.cart-summary {
+  margin-top: 24px;
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+.cart-summary-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1.05rem;
+  margin-bottom: 14px;
+}
+.cart-total-amount {
+  font-weight: 700;
+  color: #ff6b35;
+}
+.btn-checkout {
+  width: 100%;
+  background: #181818;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+}
+.btn-checkout:hover {
+  background: #333333;
+}

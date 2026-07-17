@@ -1,0 +1,80 @@
+.navbar {
+  background: #181818;
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.navbar-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 24px;
+}
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #fff;
+  text-decoration: none;
+  letter-spacing: 0.5px;
+}
+.navbar-brand-accent {
+  color: #ff6b35;
+}
+.navbar-links {
+  display: flex;
+  gap: 20px;
+}
+.navbar-links a {
+  color: #c7c7c7;
+  text-decoration: none;
+  font-weight: 500;
+}
+.navbar-links a:hover {
+  color: #fff;
+}
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.navbar-actions a {
+  color: #c7c7c7;
+  text-decoration: none;
+}
+.navbar-actions a:hover {
+  color: #fff;
+}
+.cart-link {
+  position: relative;
+}
+.cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -14px;
+  background: #e94f4f;
+  color: white;
+  border-radius: 50%;
+  padding: 1px 6px;
+  font-size: 0.7rem;
+}
+.btn-primary-sm {
+  background: #ff6b35;
+  padding: 6px 14px;
+  border-radius: 6px;
+  color: white !important;
+}
+.btn-link {
+  background: none;
+  border: none;
+  color: #c7c7c7;
+  cursor: pointer;
+  font-size: 1rem;
+  font-family: inherit;
+}
+.btn-link:hover {
+  color: #fff;
+}

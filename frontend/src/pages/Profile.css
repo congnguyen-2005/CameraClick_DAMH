@@ -1,0 +1,11 @@
+.profile-card {
+  max-width: 420px;
+}
+.profile-success {
+  background: #d4edda;
+  color: #155724;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  margin-bottom: 8px;
+}
