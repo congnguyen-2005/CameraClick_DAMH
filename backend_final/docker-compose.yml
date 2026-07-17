@@ -1,0 +1,214 @@
+version: "3.8"
+
+services:
+
+  # ---------------- Infrastructure ----------------
+
+  mysql:
+    image: mysql:8.0
+    container_name: cameraclick-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      # Khởi tạo sẵn một database chính mang tên dự án mới
+      MYSQL_DATABASE: cameraclick_main 
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - cameraclick-net
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: cameraclick-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - cameraclick-net
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.5.0
+    container_name: cameraclick-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - cameraclick-net
+
+  kafka:
+    image: confluentinc/cp-kafka:7.5.0
+    container_name: cameraclick-kafka
+    depends_on:
+      - zookeeper
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    networks:
+      - cameraclick-net
+
+  # ---------------- Service Discovery / Gateway ----------------
+
+  eureka-server:
+    build: ./eureka-server
+    container_name: cameraclick-eureka
+    ports:
+      - "8761:8761"
+    networks:
+      - cameraclick-net
+    # Sử dụng wget hoặc kiểm tra cổng raw thay cho curl để tránh lỗi thiếu thư viện trong container
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8761/eureka/apps || bash -c '</dev/tcp/localhost/8761' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: cameraclick-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - cameraclick-net
+
+  # ---------------- Business Microservices ----------------
+
+  user-service:
+    build: ./user-service
+    container_name: cameraclick-user-service
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+    networks:
+      - cameraclick-net
+
+  product-service:
+    build: ./product-service
+    container_name: cameraclick-product-service
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    ports:
+      - "8082:8082"
+    networks:
+      - cameraclick-net
+
+  cart-service:
+    build: ./cart-service
+    container_name: cameraclick-cart-service
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    ports:
+      - "8083:8083"
+    networks:
+      - cameraclick-net
+
+  order-service:
+    build: ./order-service
+    container_name: cameraclick-order-service
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    ports:
+      - "8084:8084"
+    networks:
+      - cameraclick-net
+
+  payment-service:
+    build: ./payment-service
+    container_name: cameraclick-payment-service
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    ports:
+      - "8085:8085"
+    networks:
+      - cameraclick-net
+
+  notification-service:
+    environment:
+      - MAIL_PASSWORD=hcbcgacoeydtxqsw
+    build: ./notification-service
+    container_name: cameraclick-notification-service
+    restart: on-failure
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      kafka:
+        condition: service_started
+    ports:
+      - "8086:8086"
+    networks:
+      - cameraclick-net
+
+  banner-service:
+    build: ./banner-service
+    container_name: cameraclick-banner-service
+    depends_on:
+      mysql:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    ports:
+      - "8087:8087"
+    networks:
+      - cameraclick-net
+
+  adminer:
+    image: adminer
+    container_name: cameraclick-adminer
+    ports:
+      - "8090:8080"
+    networks:
+      - cameraclick-net
+
+  # ---------------- Frontend ----------------
+
+  frontend:
+    build: ../frontend
+    container_name: cameraclick-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - cameraclick-net
+
+networks:
+  cameraclick-net:
+    driver: bridge
+
+volumes:
+  mysql_data:
